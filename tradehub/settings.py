@@ -145,4 +145,3 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'pythoncoding444@gmail.com'
 EMAIL_HOST_PASSWORD = 'eybu jssn mysa brkl'
-GOOGLE_MAPS_API_KEY ="AIzaSyC9yKhCrHX9Rl2gT51M72UOkqcS4bJm6Ig"
