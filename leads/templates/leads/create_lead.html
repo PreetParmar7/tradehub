@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-6 shadow rounded">
+    <h2 class="text-xl font-bold mb-4">
+        Get Best Price for {{ product.title }}
+    </h2>
+
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+
+        <input type="number"
+               name="quantity"
+               placeholder="Required Quantity"
+               class="w-full border p-2 rounded"
+               required>
+
+        <textarea name="message"
+                  placeholder="Describe your requirement"
+                  class="w-full border p-2 rounded"
+                  rows="4"
+                  required></textarea>
+
+        <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+            Submit Enquiry
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,546 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+/* =========================================
+   1. SHARED STYLES & UTILITIES
+   ========================================= */
+/* Force main container to have no bottom spacing */
+main { 
+    padding-top: 0 !important; 
+    padding-bottom: 0 !important; 
+    margin-bottom: 0 !important;
+}
+
+/* Ensure body/html catch-all for bottom gaps */
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   2. TOP HERO: WESTSIDE INSPIRED (PINK)
+   ========================================= */
+.westside-hero-bg {
+    background-color: #fce7f3;
+    background-image: 
+        radial-gradient(at 0% 0%, hsla(330, 81%, 90%, 1) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, #fbcfe8 0, transparent 50%), 
+        radial-gradient(at 100% 0%, #f9a8d4 0, transparent 50%);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.big-depth-text {
+    font-size: 13rem;
+    font-weight: 900;
+    line-height: 0.8;
+    color: white;
+    text-shadow: 
+        1px 1px 0 #cbd5e1,
+        2px 2px 0 #94a3b8,
+        0 20px 30px rgba(0,0,0,0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0; 
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.95;
+}
+
+.floating-char {
+    animation: float-vertical 6s ease-in-out infinite;
+    filter: drop-shadow(0 25px 25px rgba(0,0,0,0.15));
+    z-index: 10;
+}
+
+@keyframes float-vertical {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* =========================================
+   3. SECOND HERO: FLOATING LAVENDER THEME
+   ========================================= */
+.stripe-hero-bg {
+    background-color: #FDF4FF; 
+    
+    /* FLOATING EFFECT */
+    margin-top: -120px;
+    padding-top: 150px; 
+    padding-bottom: 8rem;
+    clip-path: polygon(0 80px, 100% 0, 100% 100%, 0 100%);
+    filter: drop-shadow(0 -15px 30px rgba(0,0,0,0.08)); 
+    
+    position: relative;
+    z-index: 20; 
+}
+
+.stripe-gradient {
+    background-image: 
+        radial-gradient(at 0% 0%, hsla(280, 40%, 20%, 0.05) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, hsla(260, 50%, 90%, 1) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, hsla(320, 60%, 90%, 1) 0, transparent 50%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Floating Dashboard Card */
+.animate-float-card {
+    animation: float-tilt 6s ease-in-out infinite;
+}
+@keyframes float-tilt {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+/* =========================================
+   4. MAP CONTAINER (PROPER FIT)
+   ========================================= */
+#india-map-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50%; /* Takes exactly half the card width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#india-map-container svg {
+    width: 100%;
+    height: 100%;
+    max-height: 350px; /* Prevent it from getting too tall */
+    fill: #e2e8f0; 
+    stroke: #ffffff;
+    stroke-width: 0.8;
+    transition: all 0.3s ease;
+    overflow: visible; 
+}
+
+#india-map-container path {
+    cursor: pointer;
+    transition: fill 0.2s ease, transform 0.2s ease;
+}
+
+#india-map-container path:hover {
+    fill: #db2777; 
+    transform: scale(1.05); /* Slight pop */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    z-index: 50; 
+}
+</style>
+
+<section class="relative h-[95vh] w-full overflow-hidden flex items-center justify-center bg-pink-100">
+    
+    <div class="westside-hero-bg"></div>
+
+    <div class="big-depth-text hidden lg:block center">
+        COMMERCE<br>GRID
+    </div>
+
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center h-full pb-20">
+        <div class="reveal active text-center lg:text-left mt-20 lg:mt-0">
+            <div class="inline-block px-4 py-1.5 rounded-full bg-pink-100 border border-pink-200 text-pink-700 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-sm">
+                New Collection 
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 leading-[0.9] mb-6 tracking-tighter drop-shadow-sm">
+                SOURCING <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600">REDEFINED.</span>
+            </h1>
+            <p class="text-xl text-slate-700 font-medium mb-8 max-w-lg mx-auto lg:mx-0">
+                Premium aesthetics meet industrial scale. The new standard for B2B commerce.
+            </p>
+            <button onclick="document.getElementById('original-hero').scrollIntoView({behavior: 'smooth'})" 
+                    class="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-slate-800 transition shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                Start Exploring ↓
+            </button>
+        </div>
+
+        <div class="relative h-full flex items-center justify-center reveal delay-200 pointer-events-none">
+           <img src="{% static 'css/a.jpg' %}" 
+     alt="TradeHub Character" 
+     class="floating-char w-[200px] h-auto object-contain">
+
+        </div>
+    </div>
+</section>
+
+<div id="original-hero" class="stripe-hero-bg">
+    <div class="stripe-gradient"></div>
+    
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        
+        <div class="reveal">
+            <h2 class="text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+                Financial infrastructure <br>
+                for <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">sourcing.</span>
+            </h2>
+            <p class="text-lg text-slate-600 max-w-lg mb-10 leading-relaxed">
+                Millions of companies of all sizes use CommerceGrid to source products, verify suppliers, and manage B2B payments online.
+            </p>
+
+            <form action="/marketplace/" class="relative max-w-lg group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-500"></div>
+                <div class="relative flex items-center bg-white rounded-full p-2 shadow-2xl">
+                    <div class="pl-4 text-slate-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input name="q" type="text" placeholder="Search products, suppliers..." 
+                           class="flex-1 bg-transparent border-none text-slate-800 placeholder-slate-400 px-4 focus:ring-0 outline-none h-12">
+                    <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold hover:bg-slate-800 transition">
+                        Find
+                    </button>
+                </div>
+            </form>
+            
+            <p class="mt-6 text-sm text-slate-500">
+                Popular: <span class="text-purple-700 font-semibold">Steel, Cotton, Electronics, Machinery</span>
+            </p>
+        </div>
+
+        <div class="hidden lg:block relative h-[500px] w-full reveal delay-100">
+            <div class="absolute top-4 right-4 w-[350px] h-[450px] bg-white/20 rounded-3xl border border-white/40 rotate-3 backdrop-blur-sm z-0"></div>
+            
+            <div class="absolute top-0 right-10 w-[380px] bg-white rounded-3xl shadow-2xl z-10 overflow-hidden animate-float-card transform rotate-[-2deg]">
+                <div class="h-56 relative group overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=1000&auto=format&fit=crop" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
+                        <p class="text-xs font-bold text-white/80 uppercase tracking-wider">Verified Seller</p>
+                        <h3 class="text-lg font-bold text-white">TechSource Enterprise</h3>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Price Per Unit</p>
+                            <p class="text-3xl font-bold text-purple-600">₹4,250</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Response Time</span>
+                            <span class="text-green-600 font-bold">~ 2 Hours</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Minimum Order</span>
+                            <span class="text-slate-800 font-bold">500 Units</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Location</span>
+                            <span class="text-slate-800 font-bold">Mumbai, MH</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition shadow-lg">
+                        Request Quote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">Global Reach, Local Sourcing</h2>
+            <p class="text-slate-500">Click on any state in the map below to filter suppliers by location.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+            
+            <div class="bento-card md:col-span-2 bg-slate-50 text-slate-800 flex flex-col justify-between reveal overflow-hidden relative border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="relative z-10 pointer-events-none max-w-[45%]">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <h3 class="text-xl font-bold">Supplier Network</h3>
+                    </div>
+                    <p class="text-slate-500 text-sm">Select a region to view verified sellers across 28 states.</p>
+                </div>
+                
+                <div id="india-map-container">
+                    <div class="flex items-center justify-center h-full w-full text-slate-300 text-sm">
+                        Loading Map...
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card md:col-span-1 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm reveal flex flex-col justify-center">
+                <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Escrow Payments</h3>
+                <p class="text-sm text-slate-500">Funds are held securely. You release payment only after product verification.</p>
+            </div>
+            
+            <div class="bento-card md:col-span-1 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm reveal flex flex-col justify-center">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Data Insights</h3>
+                <p class="text-sm text-slate-500">Real-time market rates and demand forecasting.</p>
+            </div>
+
+            <div class="bento-card md:col-span-2 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-8 relative overflow-hidden reveal flex items-center">
+                 <div class="relative z-10 max-w-md">
+                    <h3 class="text-2xl font-bold mb-2">Integrated Logistics</h3>
+                    <p class="text-slate-300">Automated shipping calculations and tracking for every order placed on the platform.</p>
+                </div>
+                <div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-slate-900 text-white relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-purple-600 rounded-full filter blur-[100px] opacity-30 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-pink-600 rounded-full filter blur-[100px] opacity-30 pointer-events-none"></div>
+
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10 reveal">
+        <h2 class="text-4xl lg:text-5xl font-bold mb-6 tracking-tight">Ready to streamline your supply chain?</h2>
+        <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+            Join thousands of businesses who have switched to CommerceGrid for secure, transparent, and faster sourcing.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'accounts:signup' %}" class="bg-white text-slate-900 px-8 py-4 rounded-full font-bold hover:bg-slate-100 transition shadow-lg transform hover:-translate-y-1">
+                Create Free Account
+            </a>
+            <a href="{% url 'products:product_list' %}" class="bg-transparent border border-white/30 text-white px-8 py-4 rounded-full font-bold hover:bg-white/10 transition">
+                View Marketplace
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 mb-0">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="col-span-1 md:col-span-1">
+            <h3 class="text-white text-2xl font-black mb-6">CommerceGrid</h3>
+            <p class="text-sm leading-relaxed mb-6">
+                The next generation of B2B commerce. Secure payments, verified suppliers, and seamless logistics.
+            </p>
+            <div class="flex gap-4">
+                <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">𝕏</a>
+                <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">in</a>
+                <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">Ig</a>
+            </div>
+        </div>
+
+        <div>
+            <h4 class="text-white font-bold mb-6">Platform</h4>
+            <ul class="space-y-3 text-sm">
+                <li><a href="#" class="hover:text-pink-500 transition">Browse Products</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Suppliers</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Logistics</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Escrow Service</a></li>
+            </ul>
+        </div>
+        
+        <div>
+            <h4 class="text-white font-bold mb-6">Company</h4>
+            <ul class="space-y-3 text-sm">
+                <li><a href="#" class="hover:text-pink-500 transition">About Us</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Careers</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Blog</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Contact</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="text-white font-bold mb-6">Legal</h4>
+            <ul class="space-y-3 text-sm">
+                <li><a href="#" class="hover:text-pink-500 transition">Privacy Policy</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Terms of Service</a></li>
+                <li><a href="#" class="hover:text-pink-500 transition">Cookie Policy</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-slate-900 text-sm text-center md:text-left flex flex-col md:flex-row justify-between items-center">
+        <p>&copy; CommerceGrid Inc. </p>
+        <p class="mt-4 md:mt-0">Made with ❤️ in India.</p>
+    </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. SCROLL REVEAL (keep your existing behaviour)
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // 2. INJECT SVG MAP FOR INTERACTIVITY (replacement block)
+    const mapContainer = document.getElementById('india-map-container');
+
+    // Ensure the container accepts pointer events (defensive)
+    mapContainer.style.pointerEvents = 'auto';
+
+    // Create tooltip if not present (keeps your same styles)
+    let tooltip = document.getElementById('map-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'map-tooltip';
+        tooltip.className = 'fixed hidden px-3 py-1 text-sm text-white bg-black/80 rounded-lg z-50';
+        document.body.appendChild(tooltip);
+    }
+
+    // Helper: derive a friendly label and a short state code for the query param
+    function deriveStateInfo(elem) {
+        // Try several attributes commonly used in SVGs
+        const possible = [
+            elem.getAttribute('data-state'),
+            elem.getAttribute('data-code'),
+            elem.getAttribute('id'),
+            elem.getAttribute('name'),
+            elem.getAttribute('aria-label'),
+            elem.getAttribute('title'),
+            elem.getAttribute('inkscape:label')
+        ];
+        let raw = possible.find(Boolean) || '';
+        raw = raw.trim();
+
+        // Attempt to extract a two-letter code at the end (common patterns like IN-MH, MH, KA)
+        const codeMatch = raw.match(/([A-Z]{2})$/i) || raw.match(/-([A-Z]{2})$/i);
+        const code = codeMatch ? codeMatch[1].toUpperCase() : (raw ? raw : null);
+
+        // Fallback label: try inner title element or aria-labelledby, else use raw
+        let label = raw;
+        if (!label && elem.querySelector) {
+            const titleEl = elem.querySelector('title');
+            if (titleEl && titleEl.textContent) label = titleEl.textContent.trim();
+        }
+        if (!label) label = code || 'State';
+
+        return { code, label };
+    }
+
+    // Load SVG and attach interactions
+    fetch("{% static 'maps/india.svg' %}")
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+        })
+        .then(svgText => {
+            // Put raw svg into the container
+            mapContainer.innerHTML = svgText;
+
+            // Some SVGs embed everything inside an <svg> — select that for event attachment
+            const svgRoot = mapContainer.querySelector('svg') || mapContainer;
+
+            // Ensure SVG elements accept pointer events (defensive)
+            svgRoot.style.pointerEvents = 'auto';
+
+            // Select all candidate clickable elements (paths, g, polygons, circles)
+            const candidates = svgRoot.querySelectorAll('path, g, polygon, circle, rect');
+
+            candidates.forEach(elem => {
+                // Skip decorative elements with no area
+                // We'll add handlers only if the element has any geometry or id-like attribute
+                const hasGeometry = elem.tagName.toLowerCase() !== 'g' ? true : (elem.querySelector('path, polygon, rect, circle') !== null);
+
+                const { code, label } = deriveStateInfo(elem);
+
+                // If nothing meaningful, we still allow click but skip tooltips for purely decorative parts
+                const isUsable = code || label;
+
+                // Make it keyboard focusable for accessibility
+                elem.setAttribute('tabindex', '0');
+                elem.style.outline = 'none';
+
+                // Hover / focus => show tooltip
+                const showTooltip = (evt) => {
+                    if (!isUsable) return;
+                    tooltip.innerHTML = `<strong>${label}</strong><br>Click to view suppliers`;
+                    tooltip.classList.remove('hidden');
+                    tooltip.style.opacity = '1';
+                    // Position near pointer if mouse, otherwise near element bounding box
+                    if (evt && evt.pageX) {
+                        tooltip.style.left = (evt.pageX + 14) + 'px';
+                        tooltip.style.top = (evt.pageY + 14) + 'px';
+                    } else {
+                        const bbox = elem.getBoundingClientRect();
+                        tooltip.style.left = (window.scrollX + bbox.right + 12) + 'px';
+                        tooltip.style.top = (window.scrollY + bbox.top + 12) + 'px';
+                    }
+                    // subtle visual feedback: add a temporary class/style
+                    try { elem.classList.add('map-hover'); } catch(e){}
+                };
+
+                const moveTooltip = (e) => {
+                    tooltip.style.left = (e.pageX + 14) + 'px';
+                    tooltip.style.top = (e.pageY + 14) + 'px';
+                };
+
+                const hideTooltip = () => {
+                    tooltip.style.opacity = '0';
+                    tooltip.classList.add('hidden');
+                    try { elem.classList.remove('map-hover'); } catch(e){}
+                };
+
+                const navigateToState = () => {
+                    if (!code && !label) return;
+                    const param = code ? code : label;
+                    window.location.href = `/marketplace/?state=${encodeURIComponent(param)}`;
+                };
+
+                // Attach mouse events
+                elem.addEventListener('mouseenter', showTooltip);
+                elem.addEventListener('mousemove', moveTooltip);
+                elem.addEventListener('mouseleave', hideTooltip);
+
+                // Click and keyboard
+                elem.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    navigateToState();
+                });
+                elem.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault();
+                        navigateToState();
+                    }
+                });
+
+                // Make pointer cursor (defensive if CSS didn't apply)
+                elem.style.cursor = 'pointer';
+            });
+        })
+        .catch(err => {
+            console.error('Error loading SVG map:', err);
+            mapContainer.innerHTML = '<p class="text-red-400 text-sm p-4">Map could not be loaded.</p>';
+        });
+});
+</script>
+
+{% endblock %}

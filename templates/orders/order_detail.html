@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto px-6 py-10">
+    
+    <div class="flex justify-between items-center mb-10">
+        <div>
+            <h2 class="text-3xl font-bold text-slate-900">Order #{{ order.id }}</h2>
+            <p class="text-slate-500 mt-1">Placed on {{ order.created_at|date:"F d, Y" }}</p>
+        </div>
+        <a href="{% url 'orders:download_invoice' order.id %}"
+           class="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition shadow-sm">
+            Download Invoice
+        </a>
+    </div>
+
+    <div class="bg-white p-8 rounded-2xl shadow-card border border-slate-100 mb-8">
+        <div class="flex items-center justify-between relative">
+            
+            {% for key, label in status_steps %}
+            <div class="flex flex-col items-center relative z-10 w-full">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center mb-3 text-sm font-bold border-2 transition-all duration-300
+                    {% if key in completed_statuses %}
+                        bg-[#635BFF] border-[#635BFF] text-white
+                    {% else %}
+                        bg-white border-slate-200 text-slate-300
+                    {% endif %}">
+                    {% if key in completed_statuses %}✓{% else %}{{ forloop.counter }}{% endif %}
+                </div>
+                <span class="text-xs font-semibold uppercase tracking-wider
+                    {% if key in completed_statuses %} text-[#635BFF] {% else %} text-slate-400 {% endif %}">
+                    {{ label }}
+                </span>
+            </div>
+
+            {% if not forloop.last %}
+            <div class="absolute top-5 left-0 w-full h-[2px] bg-slate-100 -z-0">
+                </div>
+            {% endif %}
+            {% endfor %}
+            
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 font-semibold text-slate-700">Order Items</div>
+                
+                <div class="divide-y divide-slate-100">
+                    {% for item in order.items.all %}
+                    <div class="p-6 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-slate-800">{{ item.product.title }}</p>
+                            <p class="text-sm text-slate-500">Qty: {{ item.quantity }}</p>
+                        </div>
+                        <span class="font-medium text-slate-900">₹{{ item.price|floatformat:0 }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                    <span class="font-bold text-slate-700">Total Amount</span>
+                    <span class="text-xl font-bold text-[#635BFF]">₹{{ order.total_amount|floatformat:0 }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1 space-y-6">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="font-bold text-slate-900 mb-4">Delivery Address</h3>
+                <div class="text-sm text-slate-600 space-y-1">
+                    <p class="font-semibold text-slate-800">{{ order.address.full_name }}</p>
+                    <p>{{ order.address.address_line1 }}</p>
+                    {% if order.address.address_line2 %}<p>{{ order.address.address_line2 }}</p>{% endif %}
+                    <p>{{ order.address.city }}, {{ order.address.get_state_display }}</p>
+                    <p>PIN: {{ order.address.pincode }}</p>
+                    <p class="mt-2 text-slate-500">📞 {{ order.address.phone }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="font-bold text-slate-900 mb-4">Payment Info</h3>
+                <p class="text-sm text-slate-600">
+                    Method: <span class="font-semibold capitalize">{{ order.order_type }}</span>
+                </p>
+                <p class="text-sm text-slate-600 mt-1">
+                    Status: <span class="px-2 py-0.5 rounded bg-green-100 text-green-700 text-xs font-bold">Paid</span>
+                </p>
+            </div>
+
+            <a href="{% url 'orders:order_history' %}" class="block w-full text-center py-3 border border-slate-300 rounded-xl text-slate-600 font-semibold hover:bg-slate-50 transition">
+                &larr; Back to My Orders
+            </a>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

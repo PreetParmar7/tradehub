@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommerceGrid | Enterprise Marketplace</title>
+  <link rel="icon" type="image/jpeg" href="{% static 'css/w.jpeg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/heroicons@2.0.18/dist/heroicons.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: {
+              primary: '#635BFF', 
+              dark: '#0A2540',
+              accent: '#00D4FF',
+              surface: '#ffffff',
+            }
+          },
+          boxShadow: {
+            'stripe': '0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.3)',
+            'card': '0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F7FAFC;
+      color: #1A202C;
+    }
+    
+    /* Navbar Glass Effect */
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Location Modal */
+    .glass-card-light {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+
+<body class="antialiased selection:bg-brand-primary selection:text-white flex flex-col min-h-screen">
+
+<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 h-20">
+  <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
+    
+    <a href="/" class="flex items-center gap-2 group">
+      <img src="{% static 'css/w.jpeg' %}" 
+       alt="CommerceGrid" 
+       class="h-10 w-auto object-contain mix-blend-multiply"> 
+       <span class="text-xl font-bold tracking-tight text-brand-dark">CommerceGrid</span>
+    </a>
+
+    <div class="flex items-center gap-8">
+      
+      <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+        <a href="/" class="hover:text-brand-primary transition">Home</a>
+        <a href="{% url 'products:product_list' %}" class="hover:text-brand-primary transition">
+              Marketplace
+            </a>
+        {% if user.is_authenticated %}
+            {% if user.profile.role != 'seller' %}
+            <a href="{% url 'orders:order_history' %}" class="hover:text-brand-primary transition">My Orders</a>
+            {% endif %}
+
+            {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
+                {% if user.profile.verification_status == 'approved' %}
+                    <a href="{% url 'products:seller_dashboard' %}#leads" class="hover:text-brand-primary transition">Leads</a>
+                    <a href="{% url 'orders:seller_orders' %}" class="hover:text-brand-primary transition">Orders</a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% if not user.is_authenticated or user.profile.role != 'seller' %}
+            <button onclick="openLocationModal()" class="flex items-center gap-2 hover:text-brand-primary transition group">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="font-medium">
+                    {% if user.is_authenticated and user.profile.city %}
+                    {{ user.profile.city }}
+                    {% elif request.session.city %}
+                    {{ request.session.city }}
+                    {% else %}
+                    Select Location
+                    {% endif %}
+                </span>
+            </button>
+        {% endif %}
+      </div>
+
+      <div class="flex items-center gap-4">
+        {% if user.is_authenticated %}
+          <a href="{% url 'messaging:inbox' %}" class="relative text-slate-600 hover:text-brand-primary transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+          </a>
+
+          {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
+             {% if user.profile.verification_status == 'approved' %}
+                <a href="{% url 'products:add_product' %}" class="hidden md:flex px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-full hover:bg-indigo-700 transition">
+                   Add Product
+                </a>
+             {% else %}
+                <a href="{% url 'accounts:seller_verification' %}" class="text-sm font-bold text-yellow-600 hover:text-yellow-700">
+                    Verify Account
+                </a>
+             {% endif %}
+             
+             <a href="{% url 'accounts:seller_dashboard' %}" class="hidden md:block px-4 py-2 text-sm font-semibold text-brand-primary bg-indigo-50 rounded-full hover:bg-indigo-100 transition">Dashboard</a>
+          {% endif %}
+          
+          <a href="{% url 'accounts:logout' %}" class="text-sm font-semibold text-slate-500 hover:text-red-500 transition">Logout</a>
+        
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="text-sm font-semibold text-slate-600 hover:text-brand-primary transition">Sign in</a>
+          <a href="{% url 'accounts:signup' %}" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-primary hover:bg-[#544DDF] rounded-full transition shadow-lg shadow-indigo-500/30">Start now</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<main class="flex-grow pt-24 pb-10">
+  {% block content %}{% endblock %}
+</main>
+
+<div id="locationModal" class="fixed inset-0 z-[60] hidden opacity-0 transition-opacity duration-300">
+  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeLocationModal()"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+    <div class="glass-card-light bg-white rounded-2xl p-8 relative overflow-hidden shadow-2xl">
+        <h2 class="text-2xl font-bold text-slate-800 mb-2">Set Location</h2>
+        <p class="text-slate-500 text-sm mb-6">See products available in your area.</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Pincode</label>
+                <input id="pincode" type="text" placeholder="e.g. 380001" 
+                       class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">City</label>
+                    <input id="city" type="text" placeholder="City" readonly
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-500 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">State</label>
+                    <input id="state" type="text" placeholder="State" readonly
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-500 cursor-not-allowed">
+                </div>
+            </div>
+            <button onclick="saveLocation()" class="w-full bg-brand-primary text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-indigo-500/20 transition transform hover:-translate-y-0.5 mt-2">
+                Update Location
+            </button>
+            <button onclick="closeLocationModal()" class="w-full text-slate-400 text-sm hover:text-slate-600 transition py-2">
+                Cancel
+            </button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById('locationModal');
+
+function openLocationModal() {
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    modal.querySelector('.glass-card-light').classList.add('scale-100');
+  }, 10);
+}
+
+function closeLocationModal() {
+  modal.classList.add('opacity-0');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
+}
+
+document.getElementById('pincode')?.addEventListener('blur', function () {
+  const pin = this.value;
+  if (pin.length === 6) {
+    fetch(`https://api.postalpincode.in/pincode/${pin}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data[0].Status === "Success") {
+          document.getElementById('city').value = data[0].PostOffice[0].District;
+          document.getElementById('state').value = data[0].PostOffice[0].State;
+        }
+      });
+  }
+});
+
+function getCookie(name) {
+  return document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
+}
+
+function saveLocation() {
+  fetch('/save-location/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+    body: JSON.stringify({
+      city: document.getElementById('city').value,
+      state: document.getElementById('state').value,
+      pincode: document.getElementById('pincode').value
+    })
+  }).then(() => location.reload());
+}
+</script>
+
+</body>
+</html>

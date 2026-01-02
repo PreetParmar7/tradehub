@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-8">
+    
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-slate-900">Seller Dashboard</h2>
+            <p class="text-slate-500 mt-1">Manage your business profile and products.</p>
+        </div>
+        <div class="hidden md:block">
+            <span class="text-sm font-medium text-slate-400">Last login: Today</span>
+        </div>
+    </div>
+
+    <div class="mb-8 p-6 rounded-2xl border
+        {% if profile.verification_status == 'approved' %} bg-green-50 border-green-100
+        {% elif profile.verification_status == 'under_review' %} bg-amber-50 border-amber-100
+        {% elif profile.verification_status == 'rejected' %} bg-red-50 border-red-100
+        {% else %} bg-slate-50 border-slate-200 {% endif %}">
+
+        <div class="flex items-start gap-4">
+            <div class="p-2 rounded-full bg-white shadow-sm shrink-0">
+                {% if profile.verification_status == 'approved' %} 
+                    <span class="text-2xl">🎉</span>
+                {% elif profile.verification_status == 'rejected' %}
+                    <span class="text-2xl">❌</span>
+                {% else %}
+                    <span class="text-2xl">📋</span>
+                {% endif %}
+            </div>
+
+            <div class="flex-1">
+                <h3 class="text-lg font-bold text-slate-800 mb-1">
+                    Status: {{ profile.verification_status|capfirst }}
+                </h3>
+
+                {% if profile.verification_status == 'pending' %}
+                    <p class="text-slate-600 mb-4">Complete your business profile and submit documents to start selling.</p>
+                    <a href="{% url 'accounts:request_verification' %}"
+                       class="inline-block bg-[#635BFF] text-white px-5 py-2 rounded-lg font-medium hover:bg-[#544DDF] transition shadow-md">
+                       Request Verification
+                    </a>
+                {% elif profile.verification_status == 'under_review' %}
+                    <p class="text-amber-700">Your documents are currently under review by our compliance team. This usually takes 24-48 hours.</p>
+                {% elif profile.verification_status == 'approved' %}
+                    <p class="text-green-700">Your account is fully verified. You can now list unlimited products.</p>
+                {% elif profile.verification_status == 'rejected' %}
+                    <p class="text-red-700">Verification rejected. Please check your email for details and re-upload documents.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <a href="{% url 'accounts:edit_dealer_profile' %}"
+           class="group p-6 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-card hover:-translate-y-1 transition duration-300">
+            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-[#635BFF] mb-4 group-hover:bg-[#635BFF] group-hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+            </div>
+            <h3 class="font-bold text-slate-800">Edit Profile</h3>
+            <p class="text-sm text-slate-500 mt-1">Update business details & contacts</p>
+        </a>
+
+        <a href="{% url 'products:add_product' %}"
+           class="group p-6 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-card hover:-translate-y-1 transition duration-300">
+            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-[#635BFF] mb-4 group-hover:bg-[#635BFF] group-hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            </div>
+            <h3 class="font-bold text-slate-800">Add Product</h3>
+            <p class="text-sm text-slate-500 mt-1">List a new item for sale</p>
+        </a>
+
+        <a href="{% url 'products:seller_dashboard' %}#leads"
+           class="group p-6 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-card hover:-translate-y-1 transition duration-300">
+            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-[#635BFF] mb-4 group-hover:bg-[#635BFF] group-hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+            </div>
+            <h3 class="font-bold text-slate-800">Manage Inventory</h3>
+            <p class="text-sm text-slate-500 mt-1">View leads & update stock</p>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-slate-900">Your Products</h3>
+            <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full">{{ products|length }} Items</span>
+        </div>
+
+        {% if products %}
+            <div class="divide-y divide-slate-100">
+                {% for product in products %}
+                <div class="p-5 flex items-center justify-between hover:bg-slate-50 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="w-full h-full object-cover rounded-lg">
+                            {% else %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-slate-800">{{ product.title }}</h4>
+                            <p class="text-sm font-medium text-[#635BFF]">₹{{ product.price }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'products:product_detail' product.id %}"
+                           class="text-sm font-medium text-slate-600 hover:text-[#635BFF] transition">
+                           View
+                        </a>
+                        <span class="text-slate-300">|</span>
+                        <a href="{% url 'products:delete_product' product.id %}"
+                           class="text-sm font-medium text-red-500 hover:text-red-700 transition">
+                           Delete
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="p-12 text-center">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                </div>
+                <p class="text-slate-500 mb-4">You haven't listed any products yet.</p>
+                <a href="{% url 'products:add_product' %}" class="text-[#635BFF] font-semibold hover:underline">Add your first product &rarr;</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

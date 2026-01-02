@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+    <h2 class="text-3xl font-bold text-slate-900 mb-8">Checkout</h2>
+
+    <form method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {% csrf_token %}
+
+        <div class="lg:col-span-2 space-y-8">
+            
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-indigo-50 text-[#635BFF] flex items-center justify-center text-sm">1</span>
+                    Delivery Address
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                    <input name="full_name" placeholder="Full Name" required
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                    <input name="phone" placeholder="Phone Number" required
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                </div>
+
+                <div class="mb-5">
+                    <input id="address_line1" name="address_line1" placeholder="Search address or enter manual" required
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                </div>
+
+                <div class="mb-5">
+                    <input id="address_line2" name="address_line2" placeholder="Apartment, Suite, Unit (Optional)"
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                </div>
+
+                <div class="grid grid-cols-3 gap-5 mb-5">
+                    <input id="city" name="city" placeholder="City" required
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                    <input id="state" name="state" placeholder="State" required
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                    <input id="pincode" name="pincode" placeholder="Pincode" required
+                           class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] outline-none">
+                </div>
+                
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+
+                <div id="map" class="w-full h-64 rounded-xl border border-slate-200 overflow-hidden"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-indigo-50 text-[#635BFF] flex items-center justify-center text-sm">2</span>
+                    Payment Method
+                </h3>
+
+                <div class="space-y-4">
+                    <label class="flex items-center p-4 border border-slate-200 rounded-xl cursor-pointer hover:border-[#635BFF] transition has-[:checked]:border-[#635BFF] has-[:checked]:bg-indigo-50/30">
+                        <input type="radio" name="order_type" value="cod" required class="w-5 h-5 text-[#635BFF] border-slate-300 focus:ring-[#635BFF]">
+                        <div class="ml-4">
+                            <span class="block font-bold text-slate-800">Cash on Delivery</span>
+                            <span class="block text-sm text-slate-500">Pay when you receive the product</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center p-4 border border-slate-200 rounded-xl cursor-pointer hover:border-[#635BFF] transition has-[:checked]:border-[#635BFF] has-[:checked]:bg-indigo-50/30">
+                        <input type="radio" name="order_type" value="demo" class="w-5 h-5 text-[#635BFF] border-slate-300 focus:ring-[#635BFF]">
+                        <div class="ml-4">
+                            <span class="block font-bold text-slate-800">Online Payment (Demo)</span>
+                            <span class="block text-sm text-slate-500">Instant transfer via Bank/UPI</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center p-4 border border-slate-200 rounded-xl cursor-pointer hover:border-[#635BFF] transition has-[:checked]:border-[#635BFF] has-[:checked]:bg-indigo-50/30">
+                        <input type="radio" name="order_type" value="enquiry" class="w-5 h-5 text-[#635BFF] border-slate-300 focus:ring-[#635BFF]">
+                        <div class="ml-4">
+                            <span class="block font-bold text-slate-800">Send Enquiry</span>
+                            <span class="block text-sm text-slate-500">Contact seller for custom quote</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-white p-8 rounded-2xl shadow-card border border-slate-100 sticky top-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-6">Order Summary</h3>
+
+                <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                    {% for item in cart.items.all %}
+                        <div class="flex justify-between items-center text-sm">
+                            <div>
+                                <span class="font-medium text-slate-800 block">{{ item.product.title }}</span>
+                                <span class="text-slate-500">Qty: {{ item.quantity }}</span>
+                            </div>
+                            <span class="font-bold text-slate-900">₹{{ item.subtotal }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="border-t border-slate-100 pt-4 mb-6">
+                    <div class="flex justify-between font-bold text-lg text-slate-900">
+                        <span>Total Payable</span>
+                        <span>₹{{ cart.total_price }}</span>
+                    </div>
+                </div>
+
+                <button class="w-full bg-[#635BFF] text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/20 hover:bg-[#544DDF] hover:-translate-y-0.5 transition duration-200">
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+<script>
+let map, marker;
+function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 20.5937, lng: 78.9629 },
+    zoom: 5,
+    disableDefaultUI: true
+  });
+
+  marker = new google.maps.Marker({ map, draggable: true });
+  const geocoder = new google.maps.Geocoder();
+
+  map.addListener("click", function (e) {
+    marker.setPosition(e.latLng);
+    document.getElementById("latitude").value = e.latLng.lat();
+    document.getElementById("longitude").value = e.latLng.lng();
+
+    geocoder.geocode({ location: e.latLng }, function (results, status) {
+      if (status === "OK" && results[0]) {
+        const components = results[0].address_components;
+        components.forEach(c => {
+          if (c.types.includes("locality")) document.getElementById("city").value = c.long_name;
+          if (c.types.includes("administrative_area_level_1")) document.getElementById("state").value = c.short_name;
+          if (c.types.includes("postal_code")) document.getElementById("pincode").value = c.long_name;
+        });
+        document.getElementById("address_line1").value = results[0].formatted_address;
+      }
+    });
+  });
+}
+initMap();
+</script>
+
+{% endblock %}

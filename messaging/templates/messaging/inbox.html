@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-10">
+    
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-slate-900">Messages</h2>
+        <p class="text-slate-500 mt-1">Manage your inquiries and negotiations.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden">
+        
+        {% if conversations %}
+        <div class="divide-y divide-slate-50">
+            {% for conv in conversations %}
+                <a href="{% url 'messaging:conversation' conv.id %}" 
+                   class="block p-5 hover:bg-slate-50 transition duration-200 group relative">
+                    
+                    <div class="flex items-center gap-4">
+                        
+                        <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-[#635BFF] font-bold text-lg shrink-0 border border-indigo-100 group-hover:bg-[#635BFF] group-hover:text-white transition">
+                            {% if user == conv.buyer %}
+                                {{ conv.seller.username|slice:":1"|upper }}
+                            {% else %}
+                                {{ conv.buyer.username|slice:":1"|upper }}
+                            {% endif %}
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-1">
+                                <h3 class="text-sm font-bold text-slate-900 truncate">
+                                    {% if user == conv.buyer %}
+                                        {{ conv.seller.username }}
+                                    {% else %}
+                                        {{ conv.buyer.username }}
+                                    {% endif %}
+                                </h3>
+                                <span class="text-xs text-slate-400 font-medium">
+                                    {{ conv.updated_at|timesince }} ago
+                                </span>
+                            </div>
+
+                            <p class="text-sm font-medium text-slate-700 truncate mb-0.5">
+                                Ref: {{ conv.product.title }}
+                            </p>
+                            
+                            <p class="text-sm text-slate-500 truncate group-hover:text-[#635BFF] transition">
+                                Click to view conversation &rarr;
+                            </p>
+                        </div>
+
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        {% else %}
+            <div class="text-center py-20 px-6">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">No messages yet</h3>
+                <p class="text-slate-500">When you contact a seller or a buyer contacts you, it will appear here.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

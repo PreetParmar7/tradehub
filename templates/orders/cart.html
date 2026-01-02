@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+    <h2 class="text-3xl font-bold text-slate-900 mb-8">Shopping Cart</h2>
+
+    {% if cart.items.all %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b border-slate-100 text-xs font-semibold uppercase text-slate-500 tracking-wider">
+                        <tr>
+                            <th class="p-5">Product</th>
+                            <th class="p-5">Price</th>
+                            <th class="p-5">Quantity</th>
+                            <th class="p-5 text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for item in cart.items.all %}
+                        <tr class="group hover:bg-slate-50 transition">
+                            <td class="p-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">
+                                        {% if item.product.image %}
+                                          <img src="{{ item.product.image.url }}" class="w-full h-full object-cover rounded-lg">
+                                        {% else %}
+                                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        {% endif %}
+                                    </div>
+                                    <span class="font-medium text-slate-800">{{ item.product.title }}</span>
+                                </div>
+                            </td>
+                            <td class="p-5 text-slate-600">₹{{ item.product.price }}</td>
+                            <td class="p-5">
+                                <span class="px-3 py-1 bg-slate-100 rounded text-sm font-semibold text-slate-700">{{ item.quantity }}</span>
+                            </td>
+                            <td class="p-5 text-right font-bold text-slate-900">₹{{ item.subtotal }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-white p-8 rounded-2xl shadow-card border border-slate-100 sticky top-24">
+                <h3 class="text-xl font-bold text-slate-900 mb-6">Order Summary</h3>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between text-slate-500">
+                        <span>Subtotal</span>
+                        <span>₹{{ cart.total_price }}</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Tax (Estimated)</span>
+                        <span>₹0</span>
+                    </div>
+                    <div class="border-t border-slate-100 pt-4 flex justify-between font-bold text-lg text-slate-900">
+                        <span>Total</span>
+                        <span>₹{{ cart.total_price }}</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'orders:checkout' %}"
+                   class="block w-full text-center bg-[#635BFF] text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-500/20 hover:bg-[#544DDF] hover:-translate-y-0.5 transition duration-200">
+                    Proceed to Checkout
+                </a>
+                
+                <p class="text-center text-xs text-slate-400 mt-4">
+                    Secure checkout powered by CommerceGrid.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="text-center py-20 bg-white rounded-2xl border border-slate-100">
+        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Your cart is empty</h3>
+        <p class="text-slate-500 mb-8">Looks like you haven't added any products yet.</p>
+        <a href="{% url 'products:product_list' %}" class="inline-block px-8 py-3 bg-[#635BFF] text-white font-bold rounded-lg hover:bg-[#544DDF] transition">
+            Start Shopping
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

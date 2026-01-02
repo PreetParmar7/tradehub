@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto px-6 py-10">
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-slate-900">Edit Business Profile</h2>
+        <p class="text-slate-500 mt-1">Update your public business information.</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="bg-white p-8 rounded-2xl shadow-card border border-slate-100 space-y-6">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Business Name</label>
+        <input name="business_name" value="{{ profile.business_name }}"
+               class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] focus:border-transparent outline-none transition">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">About Business</label>
+        <textarea name="about" rows="4"
+                  class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] focus:border-transparent outline-none transition">{{ profile.about }}</textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Years of Experience</label>
+            <input type="number" name="experience_years" value="{{ profile.experience_years }}"
+                   class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] focus:border-transparent outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Mobile Number</label>
+            <input name="phone" value="{{ profile.phone }}"
+                   class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] focus:border-transparent outline-none transition">
+          </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">City</label>
+            <input name="city" value="{{ profile.city }}"
+                   class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] focus:border-transparent outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">State</label>
+            <select name="state" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#635BFF] focus:border-transparent outline-none bg-white transition">
+              {% for code, name in state_choices %}
+                <option value="{{ code }}" {% if profile.state == code %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100">
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Update ID Document</label>
+          <input type="file" name="id_document" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-[#635BFF] hover:file:bg-indigo-100">
+          
+          {% if profile.id_document %}
+            <p class="text-xs text-slate-400 mt-2">Current file: {{ profile.id_document.name }}</p>
+          {% endif %}
+      </div>
+
+      {% if profile.verification_status == "pending" %}
+        <div class="bg-amber-50 border border-amber-100 text-amber-700 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
+            <span class="text-lg">⚠</span>
+            <span>Note: Updating your ID document will trigger a re-verification of your profile.</span>
+        </div>
+      {% endif %}
+
+      <div class="pt-4">
+          <button class="bg-[#635BFF] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#544DDF] shadow-lg shadow-indigo-500/20 transition transform hover:-translate-y-0.5">
+            Save Changes
+          </button>
+      </div>
+    </form>
+</div>
+
+{% endblock %}

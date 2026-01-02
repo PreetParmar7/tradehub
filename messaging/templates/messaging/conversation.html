@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-8 h-[calc(100vh-80px)] flex flex-col">
+
+    <div class="bg-white p-4 rounded-t-2xl shadow-sm border-x border-t border-slate-100 flex items-center justify-between shrink-0 z-10 relative">
+        <div class="flex items-center gap-4">
+            <a href="{% url 'messaging:inbox' %}" class="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-slate-700 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">
+                    {% if user == conversation.buyer %}
+                        {{ conversation.seller.username }}
+                    {% else %}
+                        {{ conversation.buyer.username }}
+                    {% endif %}
+                </h2>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <span>Regarding: <strong>{{ conversation.product.title }}</strong></span>
+                    <span class="text-slate-300">|</span>
+                    <span class="text-[#635BFF]">₹{{ conversation.product.price }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{% url 'products:product_detail' conversation.product.id %}" class="hidden sm:block text-xs font-bold text-slate-500 hover:text-[#635BFF] border border-slate-200 px-3 py-1.5 rounded-lg transition">
+            View Product
+        </a>
+    </div>
+
+    <div class="flex-1 bg-slate-50 border-x border-slate-100 p-6 overflow-y-auto space-y-6 flex flex-col" id="chat-container">
+        
+        <div class="text-center text-xs text-slate-400 my-4">
+            Conversation started {{ conversation.created_at|date:"M d, Y" }}
+        </div>
+
+        {% for msg in messages %}
+            <div class="flex w-full {% if msg.sender == user %}justify-end{% else %}justify-start{% endif %}">
+                <div class="max-w-[75%]">
+                    
+                    <div class="px-5 py-3 rounded-2xl shadow-sm text-sm leading-relaxed
+                        {% if msg.sender == user %}
+                            bg-[#635BFF] text-white rounded-tr-none
+                        {% else %}
+                            bg-white text-slate-800 border border-slate-100 rounded-tl-none
+                        {% endif %}">
+                        {{ msg.content }}
+                    </div>
+                    
+                    <span class="block text-[10px] text-slate-400 mt-1.5 
+                        {% if msg.sender == user %}text-right mr-1{% else %}ml-1{% endif %}">
+                        {{ msg.created_at|date:"g:i A" }}
+                    </span>
+                </div>
+            </div>
+        {% empty %}
+            <div class="flex-1 flex flex-col items-center justify-center text-slate-400">
+                <svg class="w-12 h-12 mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                <p>Start the conversation by sending a message.</p>
+            </div>
+        {% endfor %}
+        
+        <div id="scroll-anchor"></div>
+    </div>
+
+    <div class="bg-white p-4 rounded-b-2xl shadow-sm border-x border-b border-slate-100 shrink-0">
+        <form method="POST" class="relative flex items-center gap-3">
+            {% csrf_token %}
+            
+            <input
+                type="text"
+                name="content"
+                placeholder="Type your message..."
+                class="flex-1 bg-slate-50 border border-slate-200 rounded-full px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF] focus:border-transparent transition"
+                required
+                autocomplete="off"
+            >
+            
+            <button type="submit" class="p-3 bg-[#635BFF] text-white rounded-full hover:bg-[#544DDF] shadow-lg shadow-indigo-500/30 transition transform hover:scale-105 flex items-center justify-center">
+                <svg class="w-5 h-5 translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    // Auto-scroll to bottom
+    const container = document.getElementById('chat-container');
+    const anchor = document.getElementById('scroll-anchor');
+    if (anchor) {
+        anchor.scrollIntoView();
+    }
+</script>
+{% endblock %}

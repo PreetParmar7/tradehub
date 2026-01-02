@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto px-6 py-10">
+    <h2 class="text-3xl font-bold text-slate-900 mb-8">Incoming Orders</h2>
+
+    {% if orders %}
+    <div class="space-y-4">
+        {% for order in orders %}
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col lg:flex-row justify-between gap-6">
+            
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="font-bold text-lg text-slate-900">#{{ order.id }}</span>
+                    <span class="text-sm text-slate-500">{{ order.created_at|date:"M d, Y" }}</span>
+                </div>
+                <p class="text-sm text-slate-600 mb-1">
+                    Buyer: <span class="font-semibold text-slate-800">{{ order.buyer.username }}</span>
+                </p>
+                <p class="text-sm text-slate-600">
+                    Total: <span class="font-bold text-[#635BFF]">₹{{ order.total_amount }}</span>
+                </p>
+            </div>
+
+            <div class="flex-1 lg:px-8">
+                <p class="text-xs font-bold text-slate-400 uppercase mb-2">Items</p>
+                <div class="flex flex-wrap gap-2">
+                    {% for item in order.items.all %}
+                    <span class="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs text-slate-700">
+                        {{ item.product.title }} ({{ item.quantity }})
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="min-w-[200px]">
+                <form method="POST" action="{% url 'orders:update_order_status' order.id %}" class="flex gap-2">
+                    {% csrf_token %}
+                    <div class="relative w-full">
+                        <select name="status" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-2 px-3 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF] cursor-pointer font-medium">
+                            {% for key, label in order.STATUS_CHOICES %}
+                                <option value="{{ key }}" {% if order.status == key %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <button class="bg-[#635BFF] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#544DDF] transition">
+                        Save
+                    </button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="bg-white p-12 rounded-2xl border border-slate-100 text-center">
+            <p class="text-slate-500">No new orders yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

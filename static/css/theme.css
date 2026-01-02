@@ -1,0 +1,40 @@
+:root {
+  --bg-dark: #0B0F19;
+  --bg-dark-soft: #111827;
+  --brand-primary: #4f46e5;
+  --brand-secondary: #7c3aed;
+  --text-main: #0f172a;
+  --text-muted: #6b7280;
+}
+
+/* Typography */
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-main);
+  background: #f8fafc;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.03em;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  color: white;
+  padding: 0.9rem 1.6rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(79,70,229,0.35);
+}
+
+.btn-primary:hover {
+  opacity: 0.95;
+}
+
+.btn-outline {
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 0.9rem 1.6rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+}
