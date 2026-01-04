@@ -4,15 +4,31 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import Profile
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.get_or_create(user=instance, defaults={"role": "buyer"})
+    if not created:
+        return
+
+    Profile.objects.get_or_create(
+        user=instance,
+        defaults={"role": "buyer"}
+    )
+
+    # SAFE email send
+    try:
+        from .emails import send_welcome_email
+        send_welcome_email(instance)
+    except Exception as e:
+        logger.error(f"Welcome email failed: {e}")
 
 
 @receiver(pre_save, sender=Profile)
-def notify_verification(sender, instance, **kwargs):
+def send_verification_email(sender, instance, **kwargs):
     if not instance.pk:
         return
 
@@ -28,7 +44,7 @@ def notify_verification(sender, instance, **kwargs):
                 message=f"""
 Hi {instance.user.username},
 
-Your seller account has been verified successfully.
+Your seller account has been VERIFIED.
 
 You can now add products and receive orders.
 
@@ -36,7 +52,7 @@ You can now add products and receive orders.
 """,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[instance.user.email],
-                fail_silently=True,  # 🔴 THIS IS CRITICAL
+                fail_silently=True,  # 🔥 IMPORTANT
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error(f"Verification email failed: {e}")

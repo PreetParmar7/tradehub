@@ -110,7 +110,10 @@ EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "noreply@commercegrid.com"
+)
 
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
@@ -119,3 +122,17 @@ EMAIL_TIMEOUT = 10
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
     "core.context_processors.profile_context"
 )
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "ERROR",
+    },
+}
+
