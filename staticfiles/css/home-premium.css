@@ -1,0 +1,43 @@
+/* VIDEO HERO */
+.video-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.55),
+    rgba(0,0,0,0.25),
+    rgba(0,0,0,0.05)
+  );
+}
+
+/* PREMIUM HERO */
+.premium-hero {
+  background: radial-gradient(
+      60% 60% at 20% 20%,
+      rgba(79,70,229,0.25),
+      transparent
+    ),
+    radial-gradient(
+      50% 50% at 80% 30%,
+      rgba(124,58,237,0.25),
+      transparent
+    ),
+    linear-gradient(180deg, #0B0F19, #0B0F19);
+}
+
+.premium-card {
+  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+
+/* INDIA MAP */
+.state-dot {
+  fill: #ef4444;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(239,68,68,0.45));
+}
+
+.state-group.active .state-dot {
+  fill: #4f46e5;
+  filter: drop-shadow(0 0 8px rgba(79,70,229,0.7));
+}

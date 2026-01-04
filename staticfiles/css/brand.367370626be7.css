@@ -1,0 +1,42 @@
+:root {
+  --brand-dark: #0b0f19;
+  --brand-dark-soft: #111827;
+  --brand-primary: #4f46e5;
+  --brand-accent: #7c3aed;
+  --brand-light: #f8fafc;
+  --radius-xl: 1.25rem;
+}
+
+body {
+  background: var(--brand-light);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+.heading-xl {
+  font-size: clamp(3rem, 6vw, 4.8rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.heading-lg {
+  font-size: clamp(2.3rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.btn-premium {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+  color: white;
+  padding: 1rem 2.2rem;
+  border-radius: var(--radius-xl);
+  font-weight: 600;
+  box-shadow: 0 25px 50px rgba(79,70,229,.35);
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius-xl);
+}
