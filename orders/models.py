@@ -23,10 +23,10 @@ class Address(models.Model):
 
     city = models.CharField(max_length=100)
     state = models.CharField(
-        max_length=5,
+        max_length=100,
         choices=Profile.STATE_CHOICES
     )
-    pincode = models.CharField(max_length=10)
+    pincode = models.CharField(max_length=6)
 
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
