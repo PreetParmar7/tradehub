@@ -61,7 +61,7 @@
 
 <body class="antialiased selection:bg-brand-primary selection:text-white flex flex-col min-h-screen">
 
-<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 h-20">
+<!--<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 h-20">
   <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
     
     <a href="/" class="flex items-center gap-2 group">
@@ -141,7 +141,7 @@
 
     </div>
   </div>
-</nav>
+</nav>-->
 <!--<nav class="fixed top-0 w-full z-50 glass-nav h-20">
   <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
@@ -197,6 +197,61 @@
 
   </div>
 </nav>-->
+<nav class="fixed top-0 w-full z-50 glass-nav h-20">
+  <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
+
+    <a href="/" class="flex items-center gap-2">
+      <img src="{% static 'css/w.jpeg' %}" class="h-10">
+      <span class="text-xl font-bold text-brand-dark">CommerceGrid</span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+
+      <a href="/">Home</a>
+      <a href="{% url 'products:product_list' %}">Marketplace</a>
+
+      {% if user.is_authenticated %}
+        {% if user.profile %}
+          {% if user.profile.role != 'seller' %}
+            <a href="{% url 'orders:order_history' %}">My Orders</a>
+          {% endif %}
+
+          {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
+            {% if user.profile.verification_status == 'approved' %}
+              <a href="{% url 'products:seller_dashboard' %}#leads">Leads</a>
+              <a href="{% url 'orders:seller_orders' %}">Orders</a>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if not user.is_authenticated or not user.profile or user.profile.role != 'seller' %}
+        <button onclick="openLocationModal()" class="flex gap-2">
+          <span>
+            {% if user.is_authenticated and user.profile and user.profile.city %}
+              {{ user.profile.city }}
+            {% elif request.session.city %}
+              {{ request.session.city }}
+            {% else %}
+              Select Location
+            {% endif %}
+          </span>
+        </button>
+      {% endif %}
+
+    </div>
+
+    <div class="flex gap-4">
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Sign in</a>
+        <a href="{% url 'accounts:signup' %}" class="bg-brand-primary text-white px-4 py-2 rounded-full">Start now</a>
+      {% endif %}
+    </div>
+
+  </div>
+</nav>
 <main class="flex-grow pt-24 pb-10">
   {% block content %}{% endblock %}
 </main>
