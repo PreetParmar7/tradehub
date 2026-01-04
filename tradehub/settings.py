@@ -12,6 +12,9 @@ ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS",
     "localhost,127.0.0.1"
 ).split(",")
+CSRF_TRUSTED_ORIGINS = [
+    "https://web-production-3ac47.up.railway.app"
+]
 
 INSTALLED_APPS = [
     "cloudinary",
