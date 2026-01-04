@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     "notifications",
     "reviews",
     "analytics",
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +84,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
