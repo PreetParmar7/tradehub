@@ -116,3 +116,6 @@ SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
 LOGOUT_REDIRECT_URL = "/"
 EMAIL_TIMEOUT = 10
+TEMPLATES[0]["OPTIONS"]["context_processors"].append(
+    "core.context_processors.profile_context"
+)
