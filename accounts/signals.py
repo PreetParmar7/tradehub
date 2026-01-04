@@ -11,7 +11,10 @@ def create_profile_and_welcome(sender, instance, created, **kwargs):
         return
 
     Profile.objects.create(user=instance, role='buyer')
-    send_welcome_email(instance)
+    try:
+        send_welcome_email(instance)
+    except Exception as e:
+        print("Email failed:", e)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
