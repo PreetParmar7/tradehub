@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/heroicons@2.0.18/dist/heroicons.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -61,8 +61,8 @@
 
 <body class="antialiased selection:bg-brand-primary selection:text-white flex flex-col min-h-screen">
 
-<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 h-20">
-  <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
+<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center relative">
     
     <a href="/" class="flex items-center gap-2 group">
       <img src="{% static 'css/w.jpeg' %}" 
@@ -71,9 +71,9 @@
        <span class="text-xl font-bold tracking-tight text-brand-dark">CommerceGrid</span>
     </a>
 
-    <div class="flex items-center gap-8">
+    <div class="hidden md:flex items-center gap-8">
       
-      <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <div class="flex items-center gap-6 text-sm font-semibold text-slate-600">
         <a href="/" class="hover:text-brand-primary transition">Home</a>
         <a href="{% url 'products:product_list' %}" class="hover:text-brand-primary transition">
               Marketplace
@@ -119,7 +119,7 @@
 
           {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
              {% if user.profile.verification_status == 'approved' %}
-                <a href="{% url 'products:add_product' %}" class="hidden md:flex px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-full hover:bg-indigo-700 transition">
+                <a href="{% url 'products:add_product' %}" class="px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-full hover:bg-indigo-700 transition">
                    Add Product
                 </a>
              {% else %}
@@ -128,7 +128,7 @@
                 </a>
              {% endif %}
              
-             <a href="{% url 'accounts:seller_dashboard' %}" class="hidden md:block px-4 py-2 text-sm font-semibold text-brand-primary bg-indigo-50 rounded-full hover:bg-indigo-100 transition">Dashboard</a>
+             <a href="{% url 'accounts:seller_dashboard' %}" class="px-4 py-2 text-sm font-semibold text-brand-primary bg-indigo-50 rounded-full hover:bg-indigo-100 transition">Dashboard</a>
           {% endif %}
           
           <a href="{% url 'accounts:logout' %}" class="text-sm font-semibold text-slate-500 hover:text-red-500 transition">Logout</a>
@@ -138,120 +138,75 @@
           <a href="{% url 'accounts:signup' %}" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-primary hover:bg-[#544DDF] rounded-full transition shadow-lg shadow-indigo-500/30">Start now</a>
         {% endif %}
       </div>
+    </div>
+
+    <div class="md:hidden flex items-center">
+        <button id="mobile-menu-btn" class="text-slate-600 hover:text-brand-primary focus:outline-none p-2">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xl">
+    <div class="px-6 py-4 space-y-4 flex flex-col font-medium text-slate-600">
+        
+        <a href="/" class="block hover:text-brand-primary py-2">Home</a>
+        <a href="{% url 'products:product_list' %}" class="block hover:text-brand-primary py-2">Marketplace</a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'messaging:inbox' %}" class="block hover:text-brand-primary py-2 flex items-center gap-2">
+                Inbox <span class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">New</span>
+            </a>
+
+            {% if user.profile.role != 'seller' %}
+                <a href="{% url 'orders:order_history' %}" class="block hover:text-brand-primary py-2">My Orders</a>
+            {% endif %}
+
+            {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
+                <div class="pt-2 border-t border-slate-100">
+                    <p class="text-xs font-bold text-brand-primary uppercase mb-2">Seller Controls</p>
+                    {% if user.profile.verification_status == 'approved' %}
+                        <a href="{% url 'products:seller_dashboard' %}#leads" class="block hover:text-brand-primary py-2">Leads</a>
+                        <a href="{% url 'orders:seller_orders' %}" class="block hover:text-brand-primary py-2">Orders</a>
+                        <a href="{% url 'products:add_product' %}" class="block hover:text-brand-primary py-2">Add Product</a>
+                    {% endif %}
+                    <a href="{% url 'accounts:seller_dashboard' %}" class="block hover:text-brand-primary py-2">Dashboard</a>
+                </div>
+            {% endif %}
+            
+            <a href="{% url 'accounts:logout' %}" class="block text-red-500 font-semibold py-2 border-t border-slate-100 mt-2">Logout</a>
+
+        {% else %}
+            <div class="flex flex-col gap-3 pt-2 border-t border-slate-100">
+                <a href="{% url 'accounts:login' %}" class="block text-center py-2 text-slate-600 hover:text-brand-primary">Sign in</a>
+                <a href="{% url 'accounts:signup' %}" class="block text-center py-3 bg-brand-primary text-white rounded-xl font-semibold shadow-lg shadow-indigo-500/30">Start now</a>
+            </div>
+        {% endif %}
+
+        {% if not user.is_authenticated or user.profile.role != 'seller' %}
+        <button onclick="openLocationModal(); document.getElementById('mobile-menu').classList.add('hidden');" class="flex items-center gap-2 py-2 text-slate-500 w-full">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span>
+                {% if user.is_authenticated and user.profile.city %}
+                    {{ user.profile.city }}
+                {% elif request.session.city %}
+                    {{ request.session.city }}
+                {% else %}
+                    Select Location
+                {% endif %}
+            </span>
+        </button>
+        {% endif %}
 
     </div>
   </div>
 </nav>
-<!--<nav class="fixed top-0 w-full z-50 glass-nav h-20">
-  <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
-    <a href="/" class="flex items-center gap-2">
-      <img src="{% static 'css/w.jpeg' %}" class="h-10 w-auto object-contain">
-      <span class="text-xl font-bold text-brand-dark">CommerceGrid</span>
-    </a>
-
-    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
-      <a href="/" class="hover:text-brand-primary">Home</a>
-      <a href="{% url 'products:product_list' %}" class="hover:text-brand-primary">Marketplace</a>
-
-      {% if user.is_authenticated %}
-        {% if user.profile.role != 'seller' %}
-          <a href="{% url 'orders:order_history' %}" class="hover:text-brand-primary">My Orders</a>
-        {% endif %}
-
-        {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
-          {% if user.profile.verification_status == 'approved' %}
-            <a href="{% url 'products:seller_dashboard' %}#leads">Leads</a>
-            <a href="{% url 'orders:seller_orders' %}">Orders</a>
-          {% endif %}
-        {% endif %}
-      {% endif %}
-
-      {% if not user.is_authenticated %}
-        <button onclick="openLocationModal()" class="flex gap-2">
-          <span>Select Location</span>
-        </button>
-      {% elif user.profile.role != 'seller' %}
-        <button onclick="openLocationModal()" class="flex gap-2">
-          <span>
-            {% if user.profile.city %}
-              {{ user.profile.city }}
-            {% elif request.session.city %}
-              {{ request.session.city }}
-            {% else %}
-              Select Location
-            {% endif %}
-          </span>
-        </button>
-      {% endif %}
-    </div>
-
-    <div class="flex gap-4">
-      {% if user.is_authenticated %}
-        <a href="{% url 'accounts:logout' %}" class="text-sm">Logout</a>
-      {% else %}
-        <a href="{% url 'accounts:login' %}">Sign in</a>
-        <a href="{% url 'accounts:signup' %}" class="bg-brand-primary text-white px-4 py-2 rounded-full">Start now</a>
-      {% endif %}
-    </div>
-
-  </div>
-</nav>-->
-<!--<nav class="fixed top-0 w-full z-50 glass-nav h-20">
-  <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-
-    <a href="/" class="flex items-center gap-2">
-      <img src="{% static 'css/w.jpeg' %}" class="h-10">
-      <span class="text-xl font-bold text-brand-dark">CommerceGrid</span>
-    </a>
-
-    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
-
-      <a href="/">Home</a>
-      <a href="{% url 'products:product_list' %}">Marketplace</a>
-
-      {% if user.is_authenticated %}
-        {% if user.profile %}
-          {% if user.profile.role != 'seller' %}
-            <a href="{% url 'orders:order_history' %}">My Orders</a>
-          {% endif %}
-
-          {% if user.profile.role == 'seller' or user.profile.role == 'both' %}
-            {% if user.profile.verification_status == 'approved' %}
-              <a href="{% url 'products:seller_dashboard' %}#leads">Leads</a>
-              <a href="{% url 'orders:seller_orders' %}">Orders</a>
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endif %}
-
-      {% if not user.is_authenticated or not user.profile or user.profile.role != 'seller' %}
-        <button onclick="openLocationModal()" class="flex gap-2">
-          <span>
-            {% if user.is_authenticated and user.profile and user.profile.city %}
-              {{ user.profile.city }}
-            {% elif request.session.city %}
-              {{ request.session.city }}
-            {% else %}
-              Select Location
-            {% endif %}
-          </span>
-        </button>
-      {% endif %}
-
-    </div>
-
-    <div class="flex gap-4">
-      {% if user.is_authenticated %}
-        <a href="{% url 'accounts:logout' %}">Logout</a>
-      {% else %}
-        <a href="{% url 'accounts:login' %}">Sign in</a>
-        <a href="{% url 'accounts:signup' %}" class="bg-brand-primary text-white px-4 py-2 rounded-full">Start now</a>
-      {% endif %}
-    </div>
-
-  </div>
-</nav>-->
 <main class="flex-grow pt-24 pb-10">
   {% block content %}{% endblock %}
 </main>
@@ -293,6 +248,17 @@
 </div>
 
 <script>
+// --- Mobile Menu Toggle Logic ---
+const btn = document.getElementById('mobile-menu-btn');
+const menu = document.getElementById('mobile-menu');
+
+if(btn && menu){
+    btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+    });
+}
+// --------------------------------
+
 const modal = document.getElementById('locationModal');
 
 function openLocationModal() {
