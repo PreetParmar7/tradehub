@@ -151,7 +151,7 @@ def checkout(request):
 
     return render(request, "orders/checkout.html", {
         "cart": cart,
-        "google_maps_api_key": settings.GOOGLE_MAPS_API_KEY,
+        #"google_maps_api_key": settings.GOOGLE_MAPS_API_KEY,
     })
 
 
